@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "Ricrym_1",
+			"Path": "..\\Source\\Ricrym_1.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "Ricrym_1Editor",
+			"Path": "..\\Source\\Ricrym_1Editor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
