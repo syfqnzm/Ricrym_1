@@ -26,8 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Attack(AActor* Target);
 
-
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
