@@ -1,42 +1,90 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// PlayerCharacter.h
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include <CombatSystem.h>
+#include <EnhancedInputLibrary.h>
 #include "PlayerCharacter.generated.h"
+
+
+class UHealthComponent;
+class UInputMappingContext;
+class UInputAction;
+class UUserWidget;
 
 UCLASS()
 class RICRYM_1_API APlayerCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
+
 public:
-	// Sets default values for this character's properties
-	APlayerCharacter();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float Health = 100.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float Damage = 15.0f;
-
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void TakeDamage(float DamageAmount);
-
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Attack(AActor* Target);
-
-
+    APlayerCharacter();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+    virtual void Tick(float DeltaTime) override;
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    void Move(const FInputActionValue& Value);
+    void Look(const FInputActionValue& Value);
+    void StartJump();
+    void StopJump(); // Add this declaration
 
+    UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Components")
+    UHealthComponent* HealthComponent;
+
+    // Combat system
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    class ACombatSystem* CombatSystem;
+
+    // Skeletal Mesh Component for the Spear
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    class USkeletalMeshComponent* SpearMesh;
+
+    // Input Mapping Context
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputMappingContext* IMC_Default;
+
+    // Input Actions
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_Move;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_Look;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_Jump;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_Attack;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_RangedAttack;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    class UInputAction* IA_AOEAttack;
+
+    // Health Bar Widget Class
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> HealthBarWidgetClass;
+
+    // Health Bar Widget
+    UPROPERTY()
+    class UUserWidget* HealthBarWidget;
+
+    // Function to update health bar
+    UFUNCTION()
+    void UpdateHealthBar(float HealthPercent);
+
+    // Attack Functions
+    void PerformMeleeAttack();
+    void PerformRangeAttack();
+    void PerformAOEAttack();
+
+    // Replication
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
